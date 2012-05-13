@@ -15,7 +15,7 @@ if test -f arch/arm/boot/zImage; then
 	rm arch/arm/boot/zImage
 fi
 
-make -j2 CROSS_COMPILE=/usr/arm-toolchain/bin/arm-eabi- ARCH=arm
+make -j2 CROSS_COMPILE=/usr/arm-toolchain/bin/arm-eabi- ARCH=arm KALLSYMS_EXTRA_PASS=1
 
 if test -f arch/arm/boot/zImage; then
 	echo "Tarballing the kernel"
