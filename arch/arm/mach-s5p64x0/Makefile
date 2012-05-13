@@ -14,6 +14,7 @@ obj-				:=
 
 obj-y				+= common.o clock.o
 obj-$(CONFIG_CPU_S5P6440)	+= clock-s5p6440.o
+obj-$(CONFIG_CPU_S5P6442)	+= clock-s5p6442.o
 obj-$(CONFIG_CPU_S5P6450)	+= clock-s5p6450.o
 
 obj-$(CONFIG_PM)		+= pm.o irq-pm.o
@@ -23,6 +24,7 @@ obj-y				+= dma.o
 # machine support
 
 obj-$(CONFIG_MACH_SMDK6440)	+= mach-smdk6440.o
+obj-$(CONFIG_MACH_APOLLO)	+= mach-apollo.o
 obj-$(CONFIG_MACH_SMDK6450)	+= mach-smdk6450.o
 
 # device support
