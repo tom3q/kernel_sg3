@@ -264,7 +264,7 @@ static void __init smdk6440_machine_init(void)
 	platform_add_devices(smdk6440_devices, ARRAY_SIZE(smdk6440_devices));
 }
 
-MACHINE_START(SMDK6440, "SMDK6440")
+MACHINE_START(APOLLO, "APOLLO")
 	/* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
 	.atag_offset	= 0x100,
 
