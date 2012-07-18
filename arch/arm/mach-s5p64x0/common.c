@@ -242,7 +242,7 @@ void __init s5p6450_init_clocks(int xtal)
  * register the CPU interrupts
  */
 
-#ifdef CONFIG_CPU_S5P6440
+#if defined(CONFIG_CPU_S5P6440) || defined(CONFIG_CPU_S5P6442)
 void __init s5p6440_init_irq(void)
 {
 	/* S5P6440 supports 2 VIC */
