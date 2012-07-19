@@ -297,6 +297,13 @@ SECTIONS
 	NOTES
 
 	BSS_SECTION(0, 0, 0)
+	.stack : {
+		. = ALIGN(4);
+		__stack_start = .;
+		*(.boot.stack)
+		. = ALIGN(4);
+		__stack_end = .;
+	}
 	_end = .;
 
 	STABS_DEBUG

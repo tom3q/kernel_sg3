@@ -16,6 +16,10 @@
 #include <plat/map-base.h>
 #include <plat/map-s5p.h>
 
+#include "s5p6442_map.h"
+#define S3C_PA_UART		(0xEC000000)
+
+
 #define S5P64X0_PA_SDRAM	0x20000000
 
 #define S5P64X0_PA_CHIPID	0xE0000000

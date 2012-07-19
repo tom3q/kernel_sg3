@@ -44,6 +44,7 @@
  *  r5, r6 corrupted
  */
 __vet_atags:
+	DBG_MSG(__vet_atags)
 	tst	r2, #0x3			@ aligned?
 	bne	1f
 
@@ -78,6 +79,7 @@ ENDPROC(__vet_atags)
  */
 	__INIT
 __mmap_switched:
+	DBG_MSG(__mmap_switched)
 	adr	r3, __mmap_switched_data
 
 	ldmia	r3!, {r4, r5, r6, r7}
@@ -143,6 +145,7 @@ ENDPROC(lookup_processor_type)
  */
 	__CPUINIT
 __lookup_processor_type:
+	DBG_MSG(__lookup_processor_type)
 	adr	r3, __lookup_processor_type_data
 	ldmia	r3, {r4 - r6}
 	sub	r3, r3, r4			@ get offset between virt&phys
@@ -202,3 +205,7 @@ __error:
 1:	mov	r0, r0
 	b	1b
 ENDPROC(__error)
+
+		.align
+		.section ".boot.stack", "aw"
+boot_stack:	.space 512

@@ -27,6 +27,9 @@
 #include <mach/debug-macro.S>
 #endif
 
+#include "debug_macro.S"
+#include <mach/memory.h>
+
 /*
  * swapper_pg_dir is the virtual address of the initial page table.
  * We place the page tables 16K below KERNEL_RAM_VADDR.  Therefore, we must
@@ -93,6 +96,10 @@ ENTRY(stext)
 
 	setmode	PSR_F_BIT | PSR_I_BIT | SVC_MODE, r9 @ ensure svc mode
 						@ and irqs disabled
+	ldr	r13, =(__stack_end - PAGE_OFFSET + PHYS_OFFSET)
+	PRINT_REG(13)
+	DBG_MSG(stext)
+
 	mrc	p15, 0, r9, c0, c0		@ get processor id
 	bl	__lookup_processor_type		@ r5=procinfo r9=cpuid
 	movs	r10, r5				@ invalid processor (r5=0)?
@@ -136,8 +143,9 @@ ENTRY(stext)
 	 * above.  On return, the CPU will be ready for the MMU to be
 	 * turned on, and r0 will hold the CPU control register value.
 	 */
-	ldr	r13, =__mmap_switched		@ address to jump to after
-						@ mmu has been enabled
+	ldr	r0, =__mmap_switched		@ address to jump to after
+	str	r0, [r13, #-4]!			@ mmu has been enabled
+	
 	adr	lr, BSYM(1f)			@ return (PIC) address
 	mov	r8, r4				@ set TTBR1 to swapper_pg_dir
  ARM(	add	pc, r10, #PROCINFO_INITFUNC	)
@@ -163,6 +171,7 @@ ENDPROC(stext)
  *  r4 = physical page table address
  */
 __create_page_tables:
+	DBG_MSG(__create_page_tables)
 	pgtbl	r4, r8				@ page table address
 
 	/*
@@ -347,6 +356,8 @@ ENTRY(secondary_startup)
 	 * as it has already been validated by the primary processor.
 	 */
 	setmode	PSR_F_BIT | PSR_I_BIT | SVC_MODE, r9
+	ldr	r13, =(__stack_end - PAGE_OFFSET + PHYS_OFFSET)
+	DBG_MSG(secondary_startup)
 	mrc	p15, 0, r9, c0, c0		@ get processor id
 	bl	__lookup_processor_type
 	movs	r10, r5				@ invalid processor?
@@ -364,7 +375,7 @@ ENTRY(secondary_startup)
 	add	r7, r7, #4
 	ldr	r8, [r7, lr]			@ get secondary_data.swapper_pg_dir
 	adr	lr, BSYM(__enable_mmu)		@ return address
-	mov	r13, r12			@ __secondary_switched address
+	str	r12, [r13, #-4]!		@ __secondary_switched address
  ARM(	add	pc, r10, #PROCINFO_INITFUNC	) @ initialise processor
 						  @ (return control reg)
  THUMB(	add	r12, r10, #PROCINFO_INITFUNC	)
@@ -375,6 +386,7 @@ ENDPROC(secondary_startup)
 	 * r6  = &secondary_data
 	 */
 ENTRY(__secondary_switched)
+	DBG_MSG(__secondary_switched)
 	ldr	sp, [r7, #4]			@ get secondary_data.stack
 	mov	fp, #0
 	b	secondary_start_kernel
@@ -404,6 +416,7 @@ __secondary_data:
  *  r13 = *virtual* address to jump to upon completion
  */
 __enable_mmu:
+	DBG_MSG(__enable_mmu)
 #if defined(CONFIG_ALIGNMENT_TRAP) && __LINUX_ARM_ARCH__ < 6
 	orr	r0, r0, #CR_A
 #else
@@ -455,7 +468,9 @@ ENTRY(__turn_mmu_on)
 	mrc	p15, 0, r3, c0, c0, 0		@ read id reg
 	instr_sync
 	mov	r3, r3
-	mov	r3, r13
+	sub	r13, r13, #PHYS_OFFSET
+	add	r13, r13, #PAGE_OFFSET
+	ldr	r3, [r13], #4
 	mov	pc, r3
 __turn_mmu_on_end:
 ENDPROC(__turn_mmu_on)
