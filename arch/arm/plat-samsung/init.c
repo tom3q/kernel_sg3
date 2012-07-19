@@ -46,7 +46,11 @@ static struct cpu_table * __init s3c_lookup_cpu(unsigned long idcode,
 void __init s3c_init_cpu(unsigned long idcode,
 			 struct cpu_table *cputab, unsigned int cputab_size)
 {
+	#ifdef CONFIG_MACH_APOLLO
+		idcode = 0xABABAB00;	// Samsung did this in the original code
+	#endif
 	cpu = s3c_lookup_cpu(idcode, cputab, cputab_size);
+	
 
 	if (cpu == NULL) {
 		printk(KERN_ERR "Unknown CPU type 0x%08lx\n", idcode);
