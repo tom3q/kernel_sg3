@@ -553,12 +553,14 @@ EXPORT_SYMBOL(phys_mem_access_prot);
 static void __init *early_alloc_aligned(unsigned long sz, unsigned long align)
 {
 	void *ptr = __va(memblock_alloc(sz, align));
+	printk(KERN_DEBUG "about to memset %lu\n", sz);
 	memset(ptr, 0, sz);
 	return ptr;
 }
 
 static void __init *early_alloc(unsigned long sz)
 {
+	printk(KERN_DEBUG "about to early_alloc_aligned %lu\n", sz);
 	return early_alloc_aligned(sz, sz);
 }
 
@@ -1028,9 +1030,11 @@ static void __init devicemaps_init(struct machine_desc *mdesc)
 	 */
 	vectors = early_alloc(PAGE_SIZE);
 
+	printk(KERN_DEBUG "about to early_trap_init \n");
 	early_trap_init(vectors);
 
 	for (addr = VMALLOC_START; addr; addr += PMD_SIZE)
+		printk(KERN_DEBUG "about to pmd_clear \n");
 		pmd_clear(pmd_off_k(addr));
 
 	/*
@@ -1072,6 +1076,7 @@ static void __init devicemaps_init(struct machine_desc *mdesc)
 	map.virtual = 0xffff0000;
 	map.length = PAGE_SIZE;
 	map.type = MT_HIGH_VECTORS;
+	printk(KERN_DEBUG "about to create_mapping \n");
 	create_mapping(&map, false);
 
 	if (!vectors_high()) {
@@ -1092,7 +1097,9 @@ static void __init devicemaps_init(struct machine_desc *mdesc)
 	 * any write-allocated cache lines in the vector page are written
 	 * back.  After this point, we can start to touch devices again.
 	 */
+	printk(KERN_DEBUG "about to local_flush_tlb_all \n");
 	local_flush_tlb_all();
+	printk(KERN_DEBUG "about to flush_cache_all \n");
 	flush_cache_all();
 }
 
@@ -1157,6 +1164,7 @@ void __init paging_init(struct machine_desc *mdesc)
 	prepare_page_table();
 	map_lowmem();
 	devicemaps_init(mdesc);
+	printk(KERN_DEBUG "about to kmap_init \n");
 	kmap_init();
 
 	top_pmd = pmd_off_k(0xffff0000);
@@ -1164,8 +1172,10 @@ void __init paging_init(struct machine_desc *mdesc)
 	/* allocate the zero page. */
 	zero_page = early_alloc(PAGE_SIZE);
 
+	printk(KERN_DEBUG "about to bootmem_init \n");
 	bootmem_init();
 
 	empty_zero_page = virt_to_page(zero_page);
+	printk(KERN_DEBUG "about to __flush_dcache_page \n");
 	__flush_dcache_page(NULL, empty_zero_page);
 }

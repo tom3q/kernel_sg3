@@ -203,6 +203,4 @@ __error:
 	b	1b
 ENDPROC(__error)
 
-		.align
-		.section ".boot.stack", "aw"
-boot_stack:	.space 512
+

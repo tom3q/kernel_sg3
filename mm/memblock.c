@@ -736,7 +736,9 @@ static phys_addr_t __init memblock_alloc_base_nid(phys_addr_t size,
 	/* align @size to avoid excessive fragmentation on reserved array */
 	size = round_up(size, align);
 
+	printk(KERN_DEBUG "about to memblock_find_in_range_node max_addr=%d size=%d align=%d nid=%d ", max_addr, size, align, nid);
 	found = memblock_find_in_range_node(0, max_addr, size, align, nid);
+	printk(KERN_DEBUG "found=%d\n", found);
 	if (found && !memblock_reserve(found, size))
 		return found;
 
@@ -750,6 +752,7 @@ phys_addr_t __init memblock_alloc_nid(phys_addr_t size, phys_addr_t align, int n
 
 phys_addr_t __init __memblock_alloc_base(phys_addr_t size, phys_addr_t align, phys_addr_t max_addr)
 {
+	printk(KERN_DEBUG "about to memblock_alloc_base_nid size=%d align=%d max_addr=%d, MAX_NUMNODES=%d \n", size, align, max_addr, MAX_NUMNODES);
 	return memblock_alloc_base_nid(size, align, max_addr, MAX_NUMNODES);
 }
 
