@@ -553,14 +553,12 @@ EXPORT_SYMBOL(phys_mem_access_prot);
 static void __init *early_alloc_aligned(unsigned long sz, unsigned long align)
 {
 	void *ptr = __va(memblock_alloc(sz, align));
-	printk(KERN_DEBUG "about to memset %lu\n", sz);
 	memset(ptr, 0, sz);
 	return ptr;
 }
 
 static void __init *early_alloc(unsigned long sz)
 {
-	printk(KERN_DEBUG "about to early_alloc_aligned %lu\n", sz);
 	return early_alloc_aligned(sz, sz);
 }
 
@@ -1030,11 +1028,9 @@ static void __init devicemaps_init(struct machine_desc *mdesc)
 	 */
 	vectors = early_alloc(PAGE_SIZE);
 
-	printk(KERN_DEBUG "about to early_trap_init \n");
 	early_trap_init(vectors);
 
 	for (addr = VMALLOC_START; addr; addr += PMD_SIZE)
-		printk(KERN_DEBUG "about to pmd_clear \n");
 		pmd_clear(pmd_off_k(addr));
 
 	/*
@@ -1076,7 +1072,6 @@ static void __init devicemaps_init(struct machine_desc *mdesc)
 	map.virtual = 0xffff0000;
 	map.length = PAGE_SIZE;
 	map.type = MT_HIGH_VECTORS;
-	printk(KERN_DEBUG "about to create_mapping \n");
 	create_mapping(&map, false);
 
 	if (!vectors_high()) {
@@ -1097,9 +1092,7 @@ static void __init devicemaps_init(struct machine_desc *mdesc)
 	 * any write-allocated cache lines in the vector page are written
 	 * back.  After this point, we can start to touch devices again.
 	 */
-	printk(KERN_DEBUG "about to local_flush_tlb_all \n");
 	local_flush_tlb_all();
-	printk(KERN_DEBUG "about to flush_cache_all \n");
 	flush_cache_all();
 }
 
@@ -1158,11 +1151,16 @@ void __init paging_init(struct machine_desc *mdesc)
 {
 	void *zero_page;
 
+	printk(KERN_DEBUG "about to memblock_set_current_limit \n");
 	memblock_set_current_limit(lowmem_limit);
 
+	printk(KERN_DEBUG "about to build_mem_type_table \n");
 	build_mem_type_table();
+	printk(KERN_DEBUG "about to prepare_page_table \n");
 	prepare_page_table();
+	printk(KERN_DEBUG "about to map_lowmem \n");
 	map_lowmem();
+	printk(KERN_DEBUG "about to devicemaps_init \n");
 	devicemaps_init(mdesc);
 	printk(KERN_DEBUG "about to kmap_init \n");
 	kmap_init();

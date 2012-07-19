@@ -962,7 +962,6 @@ void __init setup_arch(char **cmdline_p)
 	sort(&meminfo.bank, meminfo.nr_banks, sizeof(meminfo.bank[0]), meminfo_cmp, NULL);
 	sanity_check_meminfo();
 	arm_memblock_init(&meminfo, mdesc);
-	printk(KERN_DEBUG "about to paging_init \n");
 	paging_init(mdesc);
 	request_standard_resources(mdesc);
 

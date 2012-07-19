@@ -33,6 +33,8 @@
 #include <asm/mach/map.h>
 #include <asm/irq.h>
 #include <asm/mach-types.h>
+#include <asm/setup.h>
+
 
 #include <mach/hardware.h>
 #include <mach/map.h>
@@ -241,6 +243,14 @@ static void s5p6440_set_lcd_interface(void)
 	__raw_writel(cfg, S5P64X0_SPCON0);
 }
 
+static void __init apollo_fixup(struct tag *tags, char **cmdline,
+	struct meminfo *mi)
+{
+	mi->nr_banks = 1;
+	mi->bank[0].start = PHYS_OFFSET;
+	mi->bank[0].size = 256 * SZ_1M;
+}
+
 static void __init smdk6440_machine_init(void)
 {
 	s3c24xx_ts_set_platdata(NULL);
@@ -267,6 +277,8 @@ static void __init smdk6440_machine_init(void)
 MACHINE_START(APOLLO, "APOLLO")
 	/* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
 	.atag_offset	= 0x100,
+
+	.fixup		= apollo_fixup,
 
 	.init_irq	= s5p6440_init_irq,
 	.handle_irq	= vic_handle_irq,
