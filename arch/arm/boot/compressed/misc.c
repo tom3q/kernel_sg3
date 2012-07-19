@@ -153,7 +153,3 @@ decompress_kernel(unsigned long output_start, unsigned long free_mem_ptr_p,
 		putstr(" done, booting the kernel.\n");
 }
 
-void mkp_msg()
-{
-	putstr("MOIKOP CALLED!\n");
-}

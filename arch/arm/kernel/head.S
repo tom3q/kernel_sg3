@@ -97,9 +97,6 @@ ENTRY(stext)
 	setmode	PSR_F_BIT | PSR_I_BIT | SVC_MODE, r9 @ ensure svc mode
 						@ and irqs disabled
 	ldr	r13, =(__stack_end - PAGE_OFFSET + PHYS_OFFSET)
-	PRINT_REG(13)
-	DBG_MSG(stext)
-
 	mrc	p15, 0, r9, c0, c0		@ get processor id
 	bl	__lookup_processor_type		@ r5=procinfo r9=cpuid
 	movs	r10, r5				@ invalid processor (r5=0)?
@@ -171,7 +168,6 @@ ENDPROC(stext)
  *  r4 = physical page table address
  */
 __create_page_tables:
-	DBG_MSG(__create_page_tables)
 	pgtbl	r4, r8				@ page table address
 
 	/*
@@ -357,7 +353,6 @@ ENTRY(secondary_startup)
 	 */
 	setmode	PSR_F_BIT | PSR_I_BIT | SVC_MODE, r9
 	ldr	r13, =(__stack_end - PAGE_OFFSET + PHYS_OFFSET)
-	DBG_MSG(secondary_startup)
 	mrc	p15, 0, r9, c0, c0		@ get processor id
 	bl	__lookup_processor_type
 	movs	r10, r5				@ invalid processor?
@@ -386,7 +381,6 @@ ENDPROC(secondary_startup)
 	 * r6  = &secondary_data
 	 */
 ENTRY(__secondary_switched)
-	DBG_MSG(__secondary_switched)
 	ldr	sp, [r7, #4]			@ get secondary_data.stack
 	mov	fp, #0
 	b	secondary_start_kernel
@@ -416,7 +410,6 @@ __secondary_data:
  *  r13 = *virtual* address to jump to upon completion
  */
 __enable_mmu:
-	DBG_MSG(__enable_mmu)
 #if defined(CONFIG_ALIGNMENT_TRAP) && __LINUX_ARM_ARCH__ < 6
 	orr	r0, r0, #CR_A
 #else
