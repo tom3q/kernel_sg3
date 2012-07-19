@@ -56,8 +56,8 @@ static int s5p6442_epll_set_rate(struct clk *clk, unsigned long rate)
 	if (clk->rate == rate)	/* Return if nothing changed */
 		return 0;
 
-	epll_con = __raw_readl(S5P64X0_EPLL_CON);
-	epll_con_k = __raw_readl(S5P64X0_EPLL_CON_K);
+	epll_con = __raw_readl(S5P6442_EPLL_CON);
+	epll_con_k = __raw_readl(S5P6442_EPLL_CON_K);
 
 	epll_con_k &= ~(PLL90XX_KDIV_MASK);
 	epll_con &= ~(PLL90XX_MDIV_MASK | PLL90XX_PDIV_MASK | PLL90XX_SDIV_MASK);
@@ -77,8 +77,8 @@ static int s5p6442_epll_set_rate(struct clk *clk, unsigned long rate)
 		return -EINVAL;
 	}
 
-	__raw_writel(epll_con, S5P64X0_EPLL_CON);
-	__raw_writel(epll_con_k, S5P64X0_EPLL_CON_K);
+	__raw_writel(epll_con, S5P6442_EPLL_CON);
+	__raw_writel(epll_con_k, S5P6442_EPLL_CON_K);
 
 	printk(KERN_WARNING "EPLL Rate changes from %lu to %lu\n",
 			clk->rate, rate);
@@ -98,7 +98,7 @@ static struct clksrc_clk clk_hclk = {
 		.name		= "clk_hclk",
 		.parent		= &clk_armclk.clk,
 	},
-	.reg_div	= { .reg = S5P64X0_CLK_DIV0, .shift = 8, .size = 4 },
+	.reg_div	= { .reg = S5P6442_CLK_DIV0, .shift = 8, .size = 4 },
 };
 
 static struct clksrc_clk clk_pclk = {
@@ -106,7 +106,7 @@ static struct clksrc_clk clk_pclk = {
 		.name		= "clk_pclk",
 		.parent		= &clk_hclk.clk,
 	},
-	.reg_div	= { .reg = S5P64X0_CLK_DIV0, .shift = 12, .size = 4 },
+	.reg_div	= { .reg = S5P6442_CLK_DIV0, .shift = 12, .size = 4 },
 };
 static struct clksrc_clk clk_hclk_low = {
 	.clk	= {
@@ -114,7 +114,7 @@ static struct clksrc_clk clk_hclk_low = {
 	},
 	.sources	= &clkset_hclk_low,
 	.reg_src	= { .reg = S5P64X0_SYS_OTHERS, .shift = 6, .size = 1 },
-	.reg_div	= { .reg = S5P64X0_CLK_DIV3, .shift = 8, .size = 4 },
+	.reg_div	= { .reg = S5P6442_CLK_DIV3, .shift = 8, .size = 4 },
 };
 
 static struct clksrc_clk clk_pclk_low = {
@@ -122,7 +122,7 @@ static struct clksrc_clk clk_pclk_low = {
 		.name		= "clk_pclk_low",
 		.parent		= &clk_hclk_low.clk,
 	},
-	.reg_div	= { .reg = S5P64X0_CLK_DIV3, .shift = 12, .size = 4 },
+	.reg_div	= { .reg = S5P6442_CLK_DIV3, .shift = 12, .size = 4 },
 };
 
 /*
@@ -385,8 +385,8 @@ static struct clksrc_clk clksrcs[] = {
 			.enable		= s5p64x0_sclk_ctrl,
 		},
 		.sources = &clkset_group1,
-		.reg_src = { .reg = S5P64X0_CLK_SRC0, .shift = 26, .size = 2 },
-		.reg_div = { .reg = S5P64X0_CLK_DIV1, .shift = 12, .size = 4 },
+		.reg_src = { .reg = S5P6442_CLK_SRC0, .shift = 26, .size = 2 },
+		.reg_div = { .reg = S5P6442_CLK_DIV1, .shift = 12, .size = 4 },
 	}, {
 		.clk	= {
 			.name		= "sclk_dispcon",
@@ -394,8 +394,8 @@ static struct clksrc_clk clksrcs[] = {
 			.enable		= s5p64x0_sclk1_ctrl,
 		},
 		.sources = &clkset_group1,
-		.reg_src = { .reg = S5P64X0_CLK_SRC1, .shift = 4, .size = 2 },
-		.reg_div = { .reg = S5P64X0_CLK_DIV3, .shift = 0, .size = 4 },
+		.reg_src = { .reg = S5P6442_CLK_SRC1, .shift = 4, .size = 2 },
+		.reg_div = { .reg = S5P6442_CLK_DIV3, .shift = 0, .size = 4 },
 	}, {
 		.clk	= {
 			.name		= "sclk_fimgvg",
@@ -403,8 +403,8 @@ static struct clksrc_clk clksrcs[] = {
 			.enable		= s5p64x0_sclk1_ctrl,
 		},
 		.sources = &clkset_group1,
-		.reg_src = { .reg = S5P64X0_CLK_SRC1, .shift = 8, .size = 2 },
-		.reg_div = { .reg = S5P64X0_CLK_DIV3, .shift = 4, .size = 4 },
+		.reg_src = { .reg = S5P6442_CLK_SRC1, .shift = 8, .size = 2 },
+		.reg_div = { .reg = S5P6442_CLK_DIV3, .shift = 4, .size = 4 },
 	}, {
 		.clk	= {
 			.name		= "sclk_audio2",
@@ -412,8 +412,8 @@ static struct clksrc_clk clksrcs[] = {
 			.enable		= s5p64x0_sclk_ctrl,
 		},
 		.sources = &clkset_audio,
-		.reg_src = { .reg = S5P64X0_CLK_SRC1, .shift = 0, .size = 3 },
-		.reg_div = { .reg = S5P64X0_CLK_DIV2, .shift = 24, .size = 4 },
+		.reg_src = { .reg = S5P6442_CLK_SRC1, .shift = 0, .size = 3 },
+		.reg_div = { .reg = S5P6442_CLK_DIV2, .shift = 24, .size = 4 },
 	},
 };
 
@@ -425,8 +425,8 @@ static struct clksrc_clk clk_sclk_mmc0 = {
 		.enable		= s5p64x0_sclk_ctrl,
 	},
 	.sources = &clkset_group1,
-	.reg_src = { .reg = S5P64X0_CLK_SRC0, .shift = 18, .size = 2 },
-	.reg_div = { .reg = S5P64X0_CLK_DIV1, .shift = 0, .size = 4 },
+	.reg_src = { .reg = S5P6442_CLK_SRC0, .shift = 18, .size = 2 },
+	.reg_div = { .reg = S5P6442_CLK_DIV1, .shift = 0, .size = 4 },
 };
 
 static struct clksrc_clk clk_sclk_mmc1 = {
@@ -437,8 +437,8 @@ static struct clksrc_clk clk_sclk_mmc1 = {
 		.enable		= s5p64x0_sclk_ctrl,
 	},
 	.sources = &clkset_group1,
-	.reg_src = { .reg = S5P64X0_CLK_SRC0, .shift = 20, .size = 2 },
-	.reg_div = { .reg = S5P64X0_CLK_DIV1, .shift = 4, .size = 4 },
+	.reg_src = { .reg = S5P6442_CLK_SRC0, .shift = 20, .size = 2 },
+	.reg_div = { .reg = S5P6442_CLK_DIV1, .shift = 4, .size = 4 },
 };
 
 static struct clksrc_clk clk_sclk_mmc2 = {
@@ -449,8 +449,8 @@ static struct clksrc_clk clk_sclk_mmc2 = {
 		.enable		= s5p64x0_sclk_ctrl,
 	},
 	.sources = &clkset_group1,
-	.reg_src = { .reg = S5P64X0_CLK_SRC0, .shift = 22, .size = 2 },
-	.reg_div = { .reg = S5P64X0_CLK_DIV1, .shift = 8, .size = 4 },
+	.reg_src = { .reg = S5P6442_CLK_SRC0, .shift = 22, .size = 2 },
+	.reg_div = { .reg = S5P6442_CLK_DIV1, .shift = 8, .size = 4 },
 };
 
 static struct clksrc_clk clk_sclk_uclk = {
@@ -460,8 +460,8 @@ static struct clksrc_clk clk_sclk_uclk = {
 		.enable		= s5p64x0_sclk_ctrl,
 	},
 	.sources = &clkset_uart,
-	.reg_src = { .reg = S5P64X0_CLK_SRC0, .shift = 13, .size = 1 },
-	.reg_div = { .reg = S5P64X0_CLK_DIV2, .shift = 16, .size = 4 },
+	.reg_src = { .reg = S5P6442_CLK_SRC0, .shift = 13, .size = 1 },
+	.reg_div = { .reg = S5P6442_CLK_DIV2, .shift = 16, .size = 4 },
 };
 
 static struct clksrc_clk clk_sclk_spi0 = {
@@ -472,8 +472,8 @@ static struct clksrc_clk clk_sclk_spi0 = {
 		.enable		= s5p64x0_sclk_ctrl,
 	},
 	.sources = &clkset_group1,
-	.reg_src = { .reg = S5P64X0_CLK_SRC0, .shift = 14, .size = 2 },
-	.reg_div = { .reg = S5P64X0_CLK_DIV2, .shift = 0, .size = 4 },
+	.reg_src = { .reg = S5P6442_CLK_SRC0, .shift = 14, .size = 2 },
+	.reg_div = { .reg = S5P6442_CLK_DIV2, .shift = 0, .size = 4 },
 };
 
 static struct clksrc_clk clk_sclk_spi1 = {
@@ -484,8 +484,8 @@ static struct clksrc_clk clk_sclk_spi1 = {
 		.enable		= s5p64x0_sclk_ctrl,
 	},
 	.sources = &clkset_group1,
-	.reg_src = { .reg = S5P64X0_CLK_SRC0, .shift = 16, .size = 2 },
-	.reg_div = { .reg = S5P64X0_CLK_DIV2, .shift = 4, .size = 4 },
+	.reg_src = { .reg = S5P6442_CLK_SRC0, .shift = 16, .size = 2 },
+	.reg_div = { .reg = S5P6442_CLK_DIV2, .shift = 4, .size = 4 },
 };
 
 /* Clock initialization code */
@@ -540,6 +540,7 @@ void __init_or_cpufreq s5p6442_setup_clocks(void)
 	unsigned long apll;
 	unsigned long mpll;
 	unsigned long epll;
+	//unsigned long vpll;
 	unsigned int ptr;
 
 	/* Set S5P6442 functions for clk_fout_epll */
@@ -555,14 +556,15 @@ void __init_or_cpufreq s5p6442_setup_clocks(void)
 	xtal = clk_get_rate(xtal_clk);
 	clk_put(xtal_clk);
 
-	apll = s5p_get_pll45xx(xtal, __raw_readl(S5P64X0_APLL_CON), pll_4502);
-	mpll = s5p_get_pll45xx(xtal, __raw_readl(S5P64X0_MPLL_CON), pll_4502);
-	epll = s5p_get_pll90xx(xtal, __raw_readl(S5P64X0_EPLL_CON),
-				__raw_readl(S5P64X0_EPLL_CON_K));
+	apll = s5p_get_pll45xx(xtal, __raw_readl(S5P6442_APLL_CON), pll_4502);
+	mpll = s5p_get_pll45xx(xtal, __raw_readl(S5P6442_MPLL_CON), pll_4502);
+	epll = s5p_get_pll90xx(xtal, __raw_readl(S5P6442_EPLL_CON), __raw_readl(S5P6442_EPLL_CON_K));
+	//vpll = s5p_get_pll45xx(xtal, __raw_readl(S5P6442_VPLL_CON), pll_4502);
 
 	clk_fout_apll.rate = apll;
 	clk_fout_mpll.rate = mpll;
 	clk_fout_epll.rate = epll;
+	//clk_fout_vpll.rate = vpll;
 
 	printk(KERN_INFO "S5P6442: PLL settings, A=%ld.%ldMHz, M=%ld.%ldMHz," \
 			" E=%ld.%ldMHz\n",
