@@ -1,4 +1,4 @@
-/* linux/arch/arm/mach-s5p64x0/mach-smdk6440.c
+/* linux/arch/arm/mach-s5p64x0/mach-apollo.c
  *
  * Copyright (c) 2009-2010 Samsung Electronics Co., Ltd.
  *		http://www.samsung.com
@@ -72,7 +72,7 @@
 				S3C2440_UFCON_TXTRIG16 |	\
 				S3C2410_UFCON_RXTRIG8)
 
-static struct s3c2410_uartcfg smdk6440_uartcfgs[] __initdata = {
+static struct s3c2410_uartcfg apollo_uartcfgs[] __initdata = {
 	[0] = {
 		.hwport		= 0,
 		.flags		= 0,
@@ -224,11 +224,11 @@ static struct platform_pwm_backlight_data smdk6440_bl_data = {
 	.pwm_id = 1,
 };
 
-static void __init smdk6440_map_io(void)
+static void __init apollo_map_io(void)
 {
 	s5p64x0_init_io(NULL, 0);
-	s3c24xx_init_clocks(12000000);
-	s3c24xx_init_uarts(smdk6440_uartcfgs, ARRAY_SIZE(smdk6440_uartcfgs));
+	s3c24xx_init_clocks(667000);
+	s3c24xx_init_uarts(apollo_uartcfgs, ARRAY_SIZE(apollo_uartcfgs));
 	s5p_set_timer_source(S5P_PWM3, S5P_PWM4);
 }
 
@@ -251,7 +251,7 @@ static void __init apollo_fixup(struct tag *tags, char **cmdline,
 	mi->bank[0].size = 256 * SZ_1M;
 }
 
-static void __init smdk6440_machine_init(void)
+static void __init apollo_machine_init(void)
 {
 	s3c24xx_ts_set_platdata(NULL);
 
@@ -282,8 +282,8 @@ MACHINE_START(APOLLO, "APOLLO")
 
 	.init_irq	= s5p6440_init_irq,
 	.handle_irq	= vic_handle_irq,
-	.map_io		= smdk6440_map_io,
-	.init_machine	= smdk6440_machine_init,
+	.map_io		= apollo_map_io,
+	.init_machine	= apollo_machine_init,
 	.timer		= &s5p_timer,
 	.restart	= s5p64x0_restart,
 MACHINE_END

@@ -19,6 +19,9 @@ void s5p64x0_init_io(struct map_desc *mach_desc, int size);
 void s5p6440_register_clocks(void);
 void s5p6440_setup_clocks(void);
 
+void s5p6442_register_clocks(void);
+void s5p6442_setup_clocks(void);
+
 void s5p6450_register_clocks(void);
 void s5p6450_setup_clocks(void);
 

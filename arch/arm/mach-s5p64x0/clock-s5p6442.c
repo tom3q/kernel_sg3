@@ -1,9 +1,9 @@
-/* linux/arch/arm/mach-s5p64x0/clock-s5p6440.c
+/* linux/arch/arm/mach-s5p64x0/clock-s5p6442.c
  *
  * Copyright (c) 2009-2010 Samsung Electronics Co., Ltd.
  *		http://www.samsung.com
  *
- * S5P6440 - Clock support
+ * S5P6442 - Clock support
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -48,7 +48,7 @@ static u32 epll_div[][5] = {
 	{ 73728000,	9961,	49, 1, 3 }
 };
 
-static int s5p6440_epll_set_rate(struct clk *clk, unsigned long rate)
+static int s5p6442_epll_set_rate(struct clk *clk, unsigned long rate)
 {
 	unsigned int epll_con, epll_con_k;
 	unsigned int i;
@@ -88,9 +88,9 @@ static int s5p6440_epll_set_rate(struct clk *clk, unsigned long rate)
 	return 0;
 }
 
-static struct clk_ops s5p6440_epll_ops = {
+static struct clk_ops s5p6442_epll_ops = {
 	.get_rate = s5p_epll_get_rate,
-	.set_rate = s5p6440_epll_set_rate,
+	.set_rate = s5p6442_epll_set_rate,
 };
 
 static struct clksrc_clk clk_hclk = {
@@ -515,7 +515,7 @@ static struct clksrc_clk *clksrc_cdev[] = {
 	&clk_sclk_mmc2
 };
 
-static struct clk_lookup s5p6440_clk_lookup[] = {
+static struct clk_lookup s5p6442_clk_lookup[] = {
 	CLKDEV_INIT(NULL, "clk_uart_baud2", &clk_pclk_low.clk),
 	CLKDEV_INIT(NULL, "clk_uart_baud3", &clk_sclk_uclk.clk),
 	CLKDEV_INIT(NULL, "spi_busclk0", &clk_p),
@@ -526,7 +526,7 @@ static struct clk_lookup s5p6440_clk_lookup[] = {
 	CLKDEV_INIT("s3c-sdhci.2", "mmc_busclk.2", &clk_sclk_mmc2.clk),
 };
 
-void __init_or_cpufreq s5p6440_setup_clocks(void)
+void __init_or_cpufreq s5p6442_setup_clocks(void)
 {
 	struct clk *xtal_clk;
 
@@ -542,10 +542,10 @@ void __init_or_cpufreq s5p6440_setup_clocks(void)
 	unsigned long epll;
 	unsigned int ptr;
 
-	/* Set S5P6440 functions for clk_fout_epll */
+	/* Set S5P6442 functions for clk_fout_epll */
 
 	clk_fout_epll.enable = s5p_epll_enable;
-	clk_fout_epll.ops = &s5p6440_epll_ops;
+	clk_fout_epll.ops = &s5p6442_epll_ops;
 
 	clk_48m.enable = s5p64x0_clk48m_ctrl;
 
@@ -564,7 +564,7 @@ void __init_or_cpufreq s5p6440_setup_clocks(void)
 	clk_fout_mpll.rate = mpll;
 	clk_fout_epll.rate = epll;
 
-	printk(KERN_INFO "S5P6440: PLL settings, A=%ld.%ldMHz, M=%ld.%ldMHz," \
+	printk(KERN_INFO "S5P6442: PLL settings, A=%ld.%ldMHz, M=%ld.%ldMHz," \
 			" E=%ld.%ldMHz\n",
 			print_mhz(apll), print_mhz(mpll), print_mhz(epll));
 
@@ -574,7 +574,7 @@ void __init_or_cpufreq s5p6440_setup_clocks(void)
 	hclk_low = clk_get_rate(&clk_hclk_low.clk);
 	pclk_low = clk_get_rate(&clk_pclk_low.clk);
 
-	printk(KERN_INFO "S5P6440: HCLK=%ld.%ldMHz, HCLK_LOW=%ld.%ldMHz," \
+	printk(KERN_INFO "S5P6442: HCLK=%ld.%ldMHz, HCLK_LOW=%ld.%ldMHz," \
 			" PCLK=%ld.%ldMHz, PCLK_LOW=%ld.%ldMHz\n",
 			print_mhz(hclk), print_mhz(hclk_low),
 			print_mhz(pclk), print_mhz(pclk_low));
@@ -593,7 +593,7 @@ static struct clk *clks[] __initdata = {
 	&clk_pcm_cd,
 };
 
-void __init s5p6440_register_clocks(void)
+void __init s5p6442_register_clocks(void)
 {
 	int ptr;
 
@@ -609,7 +609,7 @@ void __init s5p6440_register_clocks(void)
 
 	s3c_register_clocks(init_clocks_off, ARRAY_SIZE(init_clocks_off));
 	s3c_disable_clocks(init_clocks_off, ARRAY_SIZE(init_clocks_off));
-	clkdev_add_table(s5p6440_clk_lookup, ARRAY_SIZE(s5p6440_clk_lookup));
+	clkdev_add_table(s5p6442_clk_lookup, ARRAY_SIZE(s5p6442_clk_lookup));
 
 	s3c24xx_register_clock(&dummy_apb_pclk);
 

@@ -257,8 +257,8 @@ void __init s5p6442_init_clocks(int xtal)
 
 	s3c24xx_register_baseclocks(xtal);
 	s5p_register_clocks(xtal);
-	s5p6440_register_clocks();
-	s5p6440_setup_clocks();
+	s5p6442_register_clocks();
+	s5p6442_setup_clocks();
 }
 #endif
 
