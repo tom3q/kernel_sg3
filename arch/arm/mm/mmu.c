@@ -1151,18 +1151,12 @@ void __init paging_init(struct machine_desc *mdesc)
 {
 	void *zero_page;
 
-	printk(KERN_DEBUG "about to memblock_set_current_limit \n");
 	memblock_set_current_limit(lowmem_limit);
 
-	printk(KERN_DEBUG "about to build_mem_type_table \n");
 	build_mem_type_table();
-	printk(KERN_DEBUG "about to prepare_page_table \n");
 	prepare_page_table();
-	printk(KERN_DEBUG "about to map_lowmem \n");
 	map_lowmem();
-	printk(KERN_DEBUG "about to devicemaps_init \n");
 	devicemaps_init(mdesc);
-	printk(KERN_DEBUG "about to kmap_init \n");
 	kmap_init();
 
 	top_pmd = pmd_off_k(0xffff0000);
@@ -1170,10 +1164,8 @@ void __init paging_init(struct machine_desc *mdesc)
 	/* allocate the zero page. */
 	zero_page = early_alloc(PAGE_SIZE);
 
-	printk(KERN_DEBUG "about to bootmem_init \n");
 	bootmem_init();
 
 	empty_zero_page = virt_to_page(zero_page);
-	printk(KERN_DEBUG "about to __flush_dcache_page \n");
 	__flush_dcache_page(NULL, empty_zero_page);
 }
