@@ -227,7 +227,7 @@ static struct platform_pwm_backlight_data smdk6440_bl_data = {
 static void __init apollo_map_io(void)
 {
 	s5p64x0_init_io(NULL, 0);
-	s3c24xx_init_clocks(667000000);
+	s3c24xx_init_clocks(12000000);
 	//s3c24xx_init_uarts(apollo_uartcfgs, ARRAY_SIZE(apollo_uartcfgs));
 	s5p_set_timer_source(S5P_PWM3, S5P_PWM4);
 }
