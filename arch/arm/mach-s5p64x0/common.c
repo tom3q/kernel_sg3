@@ -68,10 +68,10 @@ static struct cpu_table cpu_ids[] __initdata = {
 
 		.idcode		= S5P6442_CPU_ID,
 		.idmask		= S5P6442_CPU_MASK,
-		.map_io		= s5p6440_map_io,
-		.init_clocks	= s5p6440_init_clocks,
-		.init_uarts	= s5p6440_init_uarts,
-		.init		= s5p6440_init,
+		.map_io		= s5p6442_map_io,
+		.init_clocks	= s5p6442_init_clocks,
+		.init_uarts	= s5p6442_init_uarts,
+		.init		= s5p6442_init,
 		.name		= name_s5p6442,
 	}, {
 		.idcode		= S5P6450_CPU_ID,
@@ -200,6 +200,22 @@ void __init s5p6440_map_io(void)
 }
 #endif
 
+#ifdef CONFIG_CPU_S5P6442
+void __init s5p6442_map_io(void)
+{
+	/* initialize any device information early */
+	s3c_adc_setname("s3c6442-adc");
+	s3c_fb_setname("s5p6442-fb");
+
+	s5p64x0_default_sdhci0();
+	s5p64x0_default_sdhci1();
+	s5p6440_default_sdhci2();
+
+	iotable_init(s5p6440_iodesc, ARRAY_SIZE(s5p6440_iodesc));
+	init_consistent_dma_size(SZ_8M);
+}
+#endif
+
 #ifdef CONFIG_CPU_S5P6450
 void __init s5p6450_map_io(void)
 {
@@ -224,6 +240,18 @@ void __init s5p6450_map_io(void)
 
 #ifdef CONFIG_CPU_S5P6440
 void __init s5p6440_init_clocks(int xtal)
+{
+	printk(KERN_DEBUG "%s: initializing clocks\n", __func__);
+
+	s3c24xx_register_baseclocks(xtal);
+	s5p_register_clocks(xtal);
+	s5p6440_register_clocks();
+	s5p6440_setup_clocks();
+}
+#endif
+
+#ifdef CONFIG_CPU_S5P6442
+void __init s5p6442_init_clocks(int xtal)
 {
 	printk(KERN_DEBUG "%s: initializing clocks\n", __func__);
 
@@ -313,6 +341,18 @@ int __init s5p6440_init(void)
 }
 #endif
 
+#ifdef CONFIG_CPU_S5P6442
+int __init s5p6442_init(void)
+{
+	printk(KERN_INFO "S5P64X0(S5P6442): Initializing architecture\n");
+
+	/* set idle function */
+	arm_pm_idle = s5p64x0_idle;
+
+	return device_register(&s5p64x0_dev);
+}
+#endif
+
 #ifdef CONFIG_CPU_S5P6450
 int __init s5p6450_init(void)
 {
@@ -328,6 +368,20 @@ int __init s5p6450_init(void)
 /* uart registration process */
 #ifdef CONFIG_CPU_S5P6440
 void __init s5p6440_init_uarts(struct s3c2410_uartcfg *cfg, int no)
+{
+	int uart;
+
+	for (uart = 0; uart < no; uart++) {
+		s5p_uart_resources[uart].resources->start = S5P6440_PA_UART(uart);
+		s5p_uart_resources[uart].resources->end = S5P6440_PA_UART(uart) + S5P_SZ_UART;
+	}
+
+	s3c24xx_init_uartdevs("s3c6400-uart", s5p_uart_resources, cfg, no);
+}
+#endif
+
+#ifdef CONFIG_CPU_S5P6442
+void __init s5p6442_init_uarts(struct s3c2410_uartcfg *cfg, int no)
 {
 	int uart;
 
