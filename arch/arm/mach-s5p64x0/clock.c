@@ -39,7 +39,7 @@ struct clksrc_clk clk_mout_apll = {
 		.id		= -1,
 	},
 	.sources	= &clk_src_apll,
-	.reg_src	= { .reg = S5P64X0_CLK_SRC0, .shift = 0, .size = 1 },
+	.reg_src	= { .reg = S5P6442_CLK_SRC0, .shift = 0, .size = 1 },
 };
 
 struct clksrc_clk clk_mout_mpll = {
@@ -48,7 +48,7 @@ struct clksrc_clk clk_mout_mpll = {
 		.id		= -1,
 	},
 	.sources	= &clk_src_mpll,
-	.reg_src	= { .reg = S5P64X0_CLK_SRC0, .shift = 1, .size = 1 },
+	.reg_src	= { .reg = S5P6442_CLK_SRC0, .shift = 1, .size = 1 },
 };
 
 struct clksrc_clk clk_mout_epll = {
@@ -57,7 +57,7 @@ struct clksrc_clk clk_mout_epll = {
 		.id		= -1,
 	},
 	.sources	= &clk_src_epll,
-	.reg_src	= { .reg = S5P64X0_CLK_SRC0, .shift = 2, .size = 1 },
+	.reg_src	= { .reg = S5P6442_CLK_SRC0, .shift = 2, .size = 1 },
 };
 
 enum perf_level {
@@ -68,9 +68,9 @@ enum perf_level {
 
 static const u32 clock_table[][3] = {
 	/*{ARM_CLK, DIVarm, DIVhclk}*/
-	{L0 * 1000, (0 << ARM_DIV_RATIO_SHIFT), (3 << S5P64X0_CLKDIV0_HCLK_SHIFT)},
-	{L1 * 1000, (1 << ARM_DIV_RATIO_SHIFT), (1 << S5P64X0_CLKDIV0_HCLK_SHIFT)},
-	{L2 * 1000, (3 << ARM_DIV_RATIO_SHIFT), (0 << S5P64X0_CLKDIV0_HCLK_SHIFT)},
+	{L0 * 1000, (0 << ARM_DIV_RATIO_SHIFT), (3 << S5P6442_CLKDIV0_HCLK_SHIFT)},
+	{L1 * 1000, (1 << ARM_DIV_RATIO_SHIFT), (1 << S5P6442_CLKDIV0_HCLK_SHIFT)},
+	{L2 * 1000, (3 << ARM_DIV_RATIO_SHIFT), (0 << S5P6442_CLKDIV0_HCLK_SHIFT)},
 };
 
 static unsigned long s5p64x0_armclk_get_rate(struct clk *clk)
@@ -162,7 +162,7 @@ struct clksrc_clk clk_armclk = {
 		.parent		= &clk_mout_apll.clk,
 		.ops		= &s5p64x0_clkarm_ops,
 	},
-	.reg_div	= { .reg = S5P64X0_CLK_DIV0, .shift = 0, .size = 4 },
+	.reg_div	= { .reg = S5P6442_CLK_DIV0, .shift = 0, .size = 4 },
 };
 
 struct clksrc_clk clk_dout_mpll = {
@@ -171,7 +171,7 @@ struct clksrc_clk clk_dout_mpll = {
 		.id		= -1,
 		.parent		= &clk_mout_mpll.clk,
 	},
-	.reg_div	= { .reg = S5P64X0_CLK_DIV0, .shift = 4, .size = 1 },
+	.reg_div	= { .reg = S5P6442_CLK_DIV0, .shift = 4, .size = 1 },
 };
 
 static struct clk *clkset_hclk_low_list[] = {
@@ -201,12 +201,12 @@ int s5p64x0_hclk1_ctrl(struct clk *clk, int enable)
 
 int s5p64x0_sclk_ctrl(struct clk *clk, int enable)
 {
-	return s5p_gatectrl(S5P64X0_CLK_GATE_SCLK0, clk, enable);
+	return s5p_gatectrl(S5P6442_CLK_GATE_SCLK0, clk, enable);
 }
 
 int s5p64x0_sclk1_ctrl(struct clk *clk, int enable)
 {
-	return s5p_gatectrl(S5P64X0_CLK_GATE_SCLK1, clk, enable);
+	return s5p_gatectrl(S5P6442_CLK_GATE_SCLK1, clk, enable);
 }
 
 int s5p64x0_mem_ctrl(struct clk *clk, int enable)
