@@ -273,7 +273,7 @@ MACHINE_START(APOLLO, "APOLLO")
 
 	.fixup		= apollo_fixup,
 
-	.init_irq	= s5p6440_init_irq,
+	.init_irq	= s5p6442_init_irq,
 	.handle_irq	= vic_handle_irq,
 	.map_io		= apollo_map_io,
 	.init_machine	= apollo_machine_init,

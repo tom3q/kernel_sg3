@@ -45,6 +45,7 @@ extern void s5p6440_init_uarts(struct s3c2410_uartcfg *cfg, int no);
 #ifdef CONFIG_CPU_S5P6442
 
 extern  int s5p6442_init(void);
+extern void s5p6442_init_irq(void);
 extern void s5p6442_map_io(void);
 extern void s5p6442_init_clocks(int xtal);
 

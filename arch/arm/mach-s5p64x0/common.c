@@ -127,7 +127,12 @@ static struct map_desc s5p64x0_iodesc[] __initdata = {
 		.pfn		= __phys_to_pfn(S5P64X0_PA_VIC1),
 		.length		= SZ_16K,
 		.type		= MT_DEVICE,
-	},
+	}, {
+		.virtual	= (unsigned long)VA_VIC2,
+		.pfn		= __phys_to_pfn(S5P6442_PA_VIC2),
+		.length		= SZ_16K,
+		.type		= MT_DEVICE,
+	}
 };
 
 static struct map_desc s5p6440_iodesc[] __initdata = {
@@ -280,7 +285,7 @@ void __init s5p6450_init_clocks(int xtal)
  * register the CPU interrupts
  */
 
-#if defined(CONFIG_CPU_S5P6440) || defined(CONFIG_CPU_S5P6442)
+#ifdef CONFIG_CPU_S5P6440
 void __init s5p6440_init_irq(void)
 {
 	/* S5P6440 supports 2 VIC */
@@ -293,6 +298,21 @@ void __init s5p6440_init_irq(void)
 	vic[0] = 0xff800ae7;
 	vic[1] = 0xffbf23e5;
 
+	s5p_init_irq(vic, ARRAY_SIZE(vic));
+}
+#endif
+
+#ifdef CONFIG_CPU_S5P6442
+void __init s5p6442_init_irq(void)
+{
+	/* S5P6442 supports 3 VIC */
+	u32 vic[3];
+	
+	/* VIC0, VIC1, and VIC2: some interrupt reserved */
+	vic[0] = 0x7fefffff;
+	vic[1] = 0X7f389c81;
+	vic[2] = 0X1bbbcfff;
+	
 	s5p_init_irq(vic, ARRAY_SIZE(vic));
 }
 #endif

@@ -126,7 +126,7 @@ static int s5p64x0_armclk_set_rate(struct clk *clk, unsigned long rate)
 		__raw_writel(clk_div0_tmp, ARM_CLK_DIV);
 
 		clk_div0_tmp = __raw_readl(ARM_CLK_DIV) &
-				~(S5P64X0_CLKDIV0_HCLK_MASK);
+				~(S5P6442_CLKDIV0_HCLK_MASK);
 		clk_div0_tmp |= clock_table[iter][2];
 		__raw_writel(clk_div0_tmp, ARM_CLK_DIV);
 
@@ -134,7 +134,7 @@ static int s5p64x0_armclk_set_rate(struct clk *clk, unsigned long rate)
 	} else {
 		/* Frequency Up */
 		clk_div0_tmp = __raw_readl(ARM_CLK_DIV) &
-				~(S5P64X0_CLKDIV0_HCLK_MASK);
+				~(S5P6442_CLKDIV0_HCLK_MASK);
 		clk_div0_tmp |= clock_table[iter][2];
 		__raw_writel(clk_div0_tmp, ARM_CLK_DIV);
 
@@ -222,13 +222,13 @@ int s5p64x0_clk48m_ctrl(struct clk *clk, int enable)
 	/* can't rely on clock lock, this register has other usages */
 	local_irq_save(flags);
 
-	val = __raw_readl(S5P64X0_OTHERS);
+	val = __raw_readl(S5P6442_OTHERS);
 	if (enable)
 		val |= S5P64X0_OTHERS_USB_SIG_MASK;
 	else
 		val &= ~S5P64X0_OTHERS_USB_SIG_MASK;
 
-	__raw_writel(val, S5P64X0_OTHERS);
+	__raw_writel(val, S5P6442_OTHERS);
 
 	local_irq_restore(flags);
 
