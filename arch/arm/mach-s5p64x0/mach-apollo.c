@@ -56,6 +56,7 @@
 #include <plat/fb.h>
 #include <plat/regs-fb.h>
 #include <plat/sdhci.h>
+#include <plat/reserved_mem.h>
 
 #include "common.h"
 
@@ -97,7 +98,7 @@ static struct s3c2410_uartcfg apollo_uartcfgs[] __initdata = {
 };
 
 /* Frame Buffer */
-static struct s3c_fb_pd_win smdk6440_fb_win0 = {
+static struct s3c_fb_pd_win apollo_fb_win0 = {
 	.win_mode = {
 		.left_margin	= 8,
 		.right_margin	= 13,
@@ -105,15 +106,15 @@ static struct s3c_fb_pd_win smdk6440_fb_win0 = {
 		.lower_margin	= 5,
 		.hsync_len	= 3,
 		.vsync_len	= 1,
-		.xres		= 800,
-		.yres		= 480,
+		.xres		= 400,
+		.yres		= 240,
 	},
 	.max_bpp	= 32,
 	.default_bpp	= 24,
 };
 
-static struct s3c_fb_platdata smdk6440_lcd_pdata __initdata = {
-	.win[0]		= &smdk6440_fb_win0,
+static struct s3c_fb_platdata apollo_lcd_pdata __initdata = {
+	.win[0]		= &apollo_fb_win0,
 	.vidcon0	= VIDCON0_VIDOUT_RGB | VIDCON0_PNRMODE_RGB,
 	.vidcon1	= VIDCON1_INV_HSYNC | VIDCON1_INV_VSYNC,
 	.setup_gpio	= s5p64x0_fb_gpio_setup_24bpp,
@@ -149,7 +150,31 @@ static struct platform_device smdk6440_lcd_lte480wv = {
 	.dev.platform_data	= &smdk6440_lcd_power_data,
 };
 
-static struct platform_device *smdk6440_devices[] __initdata = {
+struct platform_device apollo_device_battery = {
+		.name	= "apollo-battery",
+		.id		= -1,
+};
+
+static struct s5p6442_pmem_setting pmem_setting = {
+        .pmem_start = RESERVED_PMEM_START,
+        .pmem_size = RESERVED_PMEM,
+        .pmem_gpu1_start = GPU1_RESERVED_PMEM_START,
+        .pmem_gpu1_size = RESERVED_PMEM_GPU1,
+        .pmem_render_start = RENDER_RESERVED_PMEM_START,
+        .pmem_render_size = RESERVED_PMEM_RENDER,
+        .pmem_stream_start = STREAM_RESERVED_PMEM_START,
+        .pmem_stream_size = RESERVED_PMEM_STREAM,
+        .pmem_preview_start = PREVIEW_RESERVED_PMEM_START,
+        .pmem_preview_size = RESERVED_PMEM_PREVIEW,
+        .pmem_picture_start = PICTURE_RESERVED_PMEM_START,
+        .pmem_picture_size = RESERVED_PMEM_PICTURE,
+        .pmem_jpeg_start = JPEG_RESERVED_PMEM_START,
+        .pmem_jpeg_size = RESERVED_PMEM_JPEG,
+        .pmem_skia_start = SKIA_RESERVED_PMEM_START,
+        .pmem_skia_size = RESERVED_PMEM_SKIA,
+};
+
+static struct platform_device *apollo_devices[] __initdata = {
 	&s3c_device_adc,
 	&s3c_device_rtc,
 	&s3c_device_i2c0,
@@ -165,11 +190,11 @@ static struct platform_device *smdk6440_devices[] __initdata = {
 	&s3c_device_hsmmc2,
 };
 
-static struct s3c_sdhci_platdata smdk6440_hsmmc0_pdata __initdata = {
+static struct s3c_sdhci_platdata apollo_hsmmc0_pdata __initdata = {
 	.cd_type	= S3C_SDHCI_CD_NONE,
 };
 
-static struct s3c_sdhci_platdata smdk6440_hsmmc1_pdata __initdata = {
+static struct s3c_sdhci_platdata apollo_hsmmc1_pdata __initdata = {
 	.cd_type	= S3C_SDHCI_CD_INTERNAL,
 #if defined(CONFIG_S5P64X0_SD_CH1_8BIT)
 	.max_width	= 8,
@@ -177,7 +202,7 @@ static struct s3c_sdhci_platdata smdk6440_hsmmc1_pdata __initdata = {
 #endif
 };
 
-static struct s3c_sdhci_platdata smdk6440_hsmmc2_pdata __initdata = {
+static struct s3c_sdhci_platdata apollo_hsmmc2_pdata __initdata = {
 	.cd_type	= S3C_SDHCI_CD_NONE,
 };
 
@@ -208,20 +233,25 @@ static struct i2c_board_info smdk6440_i2c_devs1[] __initdata = {
 };
 
 /* LCD Backlight data */
-static struct samsung_bl_gpio_info smdk6440_bl_gpio_info = {
+static struct samsung_bl_gpio_info apollo_bl_gpio_info = {
 	.no = S5P6440_GPF(15),
 	.func = S3C_GPIO_SFN(2),
 };
 
-static struct platform_pwm_backlight_data smdk6440_bl_data = {
+static struct platform_pwm_backlight_data apollo_bl_data = {
 	.pwm_id = 1,
+};
+
+struct platform_device apollo_device_backlight = {
+	.name   = "s6d04d1-backlight",
+	.id     = -1,
 };
 
 static void __init apollo_map_io(void)
 {
 	s5p64x0_init_io(NULL, 0);
 	s3c24xx_init_clocks(12000000);
-	//s3c24xx_init_uarts(apollo_uartcfgs, ARRAY_SIZE(apollo_uartcfgs));
+	s3c24xx_init_uarts(apollo_uartcfgs, ARRAY_SIZE(apollo_uartcfgs));
 	s5p_set_timer_source(S5P_PWM3, S5P_PWM4);
 }
 
@@ -255,20 +285,21 @@ static void __init apollo_machine_init(void)
 	i2c_register_board_info(1, smdk6440_i2c_devs1,
 			ARRAY_SIZE(smdk6440_i2c_devs1));
 
-	samsung_bl_set(&smdk6440_bl_gpio_info, &smdk6440_bl_data);
+	samsung_bl_set(&apollo_bl_gpio_info, &apollo_bl_data);
 
 	s5p6440_set_lcd_interface();
-	s3c_fb_set_platdata(&smdk6440_lcd_pdata);
+	s3c_fb_set_platdata(&apollo_lcd_pdata);
 
-	s3c_sdhci0_set_platdata(&smdk6440_hsmmc0_pdata);
-	s3c_sdhci1_set_platdata(&smdk6440_hsmmc1_pdata);
-	s3c_sdhci2_set_platdata(&smdk6440_hsmmc2_pdata);
+	s3c_sdhci0_set_platdata(&apollo_hsmmc0_pdata);
+	s3c_sdhci1_set_platdata(&apollo_hsmmc1_pdata);
+	s3c_sdhci2_set_platdata(&apollo_hsmmc2_pdata);
 
-	platform_add_devices(smdk6440_devices, ARRAY_SIZE(smdk6440_devices));
+	platform_add_devices(apollo_devices, ARRAY_SIZE(apollo_devices));
 }
 
 MACHINE_START(APOLLO, "APOLLO")
-	/* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
+	/* Maintainers: Mark Kennard <komcomputers@gmail.com>
+			Miki Dahab <moikop-add-your-email-if-you-wish@email.email*/
 	.atag_offset	= 0x100,
 
 	.fixup		= apollo_fixup,
